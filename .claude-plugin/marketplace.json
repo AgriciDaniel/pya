@@ -1,0 +1,15 @@
+{
+  "name": "pya",
+  "description": "PYA security audit plugin for Claude Code.",
+  "owner": {
+    "name": "AgriciDaniel",
+    "url": "https://github.com/AgriciDaniel"
+  },
+  "plugins": [
+    {
+      "name": "pya",
+      "source": "./",
+      "description": "Security audit for Claude Code with read-only specialist agents, a verifier and a dated threat feed."
+    }
+  ]
+}

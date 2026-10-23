@@ -1,23 +1,28 @@
 {
-  "name": "cybersecurity",
-  "version": "1.0.0",
-  "description": "AI-powered cybersecurity code review with 8 specialist agents, OWASP Top 10:2021, CWE Top 25:2024, MITRE ATT&CK v15, and framework-aware false-positive suppression",
+  "name": "pya",
+  "displayName": "PYA: Protect Your Ass",
+  "version": "2.0.0",
+  "description": "Security audit for Claude Code: parallel read-only specialist agents plus a verifier, a dated threat feed, optional offline scanners, OWASP Top 10:2025, CWE Top 25 2025, MITRE ATT&CK v20 and AI agent and MCP checks.",
   "author": {
-    "name": "AgriciDaniel"
+    "name": "AgriciDaniel",
+    "url": "https://github.com/AgriciDaniel"
   },
   "license": "MIT",
   "homepage": "https://github.com/AgriciDaniel/claude-cybersecurity",
   "repository": "https://github.com/AgriciDaniel/claude-cybersecurity",
+  "icon": "./.claude-plugin/icon.png",
   "keywords": [
     "security",
-    "cybersecurity",
     "code-review",
+    "appsec",
+    "sast",
     "owasp",
     "cwe",
-    "vulnerability-scanner",
+    "mitre-attack",
+    "supply-chain",
     "secret-detection",
-    "sast",
-    "appsec",
+    "mcp-security",
+    "ai-agent-security",
     "threat-modeling"
   ]
 }
