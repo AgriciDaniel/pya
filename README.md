@@ -4,7 +4,7 @@
 specialist agents review your repository in parallel. A verifier double-checks every serious
 finding, and you get a scored report with a fix queue in the right order.
 
-<p align="center"><img src="assets/scenes/hero.svg" width="100%" alt="PYA security audit for Claude Code: you type /pya, the three bots patrol a street of code folders with a scanner beam while 8 specialist agents check from the rooftops. Bugs, a leaked key and a backdoor in a dependency light up, a false alarm fades away, and the report card shows a 78 out of 100 score, a grade capped at C by a critical finding, and a prioritized fix queue."></p>
+<p align="center"><img src="assets/scenes/hero.svg" width="100%" alt="PYA security audit for Claude Code: you type /pya, the three bots patrol a street of code folders with a scanner beam while 9 specialist agents check from the rooftops. Bugs, a leaked key and a backdoor in a dependency light up, a false alarm fades away, and the report card shows a 78 out of 100 score, a grade capped at C by a critical finding, and a prioritized fix queue."></p>
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License"></a>
@@ -35,7 +35,7 @@ Upgrading from v1 (`/cybersecurity`)? See [CHANGELOG.md](CHANGELOG.md#200---2026
 
 ## Use it
 
-<p align="center"><img src="assets/scenes/recon.svg" width="100%" alt="Step 1, recon: /pya types into a terminal while the three bots walk a blueprint of the app. Entry points from the internet light up until 14 are found, 4 trust boundaries draw in around the database, secrets and an external API, and the six STRIDE threat tiles flip on. The context is packed and one envelope flies to each of the 8 security agents."></p>
+<p align="center"><img src="assets/scenes/recon.svg" width="100%" alt="Step 1, recon: /pya types into a terminal while the three bots walk a blueprint of the app. Entry points from the internet light up until 14 are found, 4 trust boundaries draw in around the database, secrets and an external API, and the six STRIDE threat tiles flip on. The context is packed and one envelope flies to each of the 9 security agents."></p>
 
 ```text
 /pya                         full audit of the current directory
@@ -50,7 +50,7 @@ Demo video: https://youtu.be/aE295lLPO5A (recorded with v1)
 
 ## What it checks
 
-<p align="center"><img src="assets/scenes/crew.svg" width="100%" alt="The crew: /pya sends 8 specialist security agents at once. The three bots at the orchestrator console fling a brief to every agent and all progress bars run in parallel. The mode menu then shows quick, diff for pull request review, and focus on one agent, plus optional compliance mapping."></p>
+<p align="center"><img src="assets/scenes/crew.svg" width="100%" alt="The crew: /pya sends 9 specialist security agents at once. The three bots at the orchestrator console fling a brief to every agent and all progress bars run in parallel. The mode menu then shows quick, diff for pull request review, and focus on one agent, plus optional compliance mapping."></p>
 
 <p align="center"><img src="assets/scenes/backdoor.svg" width="100%" alt="Threat intel: dependency crates roll toward your app and the Dependency Auditor checks each one for known CVEs. One crate passes, until the Threat Intel Analyst x-rays it and finds an obfuscated install hook that steals environment variables and SSH keys. PYA flags it critical, maps it to MITRE ATT&CK supply chain, obfuscation and exfiltration techniques, and the three bots tag it do not ship."></p>
 
@@ -72,9 +72,9 @@ stay visible in the report's "Filtered Findings" section.
 
 ## What makes the report trustworthy
 
-<p align="center"><img src="assets/scenes/filter.svg" width="100%" alt="No noise: raw security findings from 8 specialist agents ride a belt into a confidence check machine run by the three bots. False alarms, like a template that already auto-escapes or a test fixture, drop into a bin with their reason. Duplicates from two agents merge and confidence goes up. Real findings reach the report with a severity and a confidence meter: 23 raw findings in, 11 real ones out."></p>
+<p align="center"><img src="assets/scenes/filter.svg" width="100%" alt="No noise: raw security findings from 9 specialist agents ride a belt into a confidence check machine run by the three bots. False alarms, like a template that already auto-escapes or a test fixture, drop into a bin with their reason. Duplicates from two agents merge and confidence goes up. Real findings reach the report with a severity and a confidence meter: 23 raw findings in, 11 real ones out."></p>
 
-<p align="center"><img src="assets/scenes/report.svg" width="100%" alt="Report: 8 category scores fill in and the weighted security score counts up to 78 out of 100, grade B. A critical finding caps the grade at C. The three bots carry 11 findings into a prioritized fix queue: fix now, this sprint, this month, backlog, with optional compliance mapping."></p>
+<p align="center"><img src="assets/scenes/report.svg" width="100%" alt="Report: 9 category scores fill in and the weighted security score counts up to 78 out of 100, grade B. A critical finding caps the grade at C. The three bots carry 11 findings into a prioritized fix queue: fix now, this sprint, this month, backlog, with optional compliance mapping."></p>
 
 - **Scores come from a script.** `score.py` computes the scores, not the model. The grade is capped at C when any of these hold:
   - a confirmed critical;
