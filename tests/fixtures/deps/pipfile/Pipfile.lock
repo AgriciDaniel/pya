@@ -1,0 +1,16 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "0"
+        }
+    },
+    "default": {
+        "certifi": {
+            "version": "==2026.10.1"
+        },
+        "litellm": {
+            "version": "==1.106.2"
+        }
+    },
+    "develop": {}
+}

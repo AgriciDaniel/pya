@@ -1,0 +1,10 @@
+lock-version = "1.0"
+created-by = "fixture"
+
+[[packages]]
+name = "sigstore"
+version = "4.5.0"
+
+[[packages]]
+name = "certifi"
+version = "2026.10.19"

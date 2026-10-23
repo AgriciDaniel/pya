@@ -1,0 +1,17 @@
+services:
+  gitlab:
+    image: gitlab/gitlab-ee:19.4.2-ee.0
+  postiz:
+    image: ghcr.io/gitroomhq/postiz-app:v2.23.0
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:2.44.1
+  plex:
+    image: plexinc/pms-docker:1.43.3.10861
+  api:
+    image: "node:22.23.4-bookworm"
+  proxy:
+    image: ghcr.io/berriai/litellm:v1.107.0
+  tunnel:
+    image: cloudflare/cloudflared:2026.10.1
+  latest:
+    image: nginx:latest

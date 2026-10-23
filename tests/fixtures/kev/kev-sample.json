@@ -1,0 +1,11 @@
+{
+  "title": "SYNTHETIC TEST FIXTURE, not the real CISA catalog",
+  "catalogVersion": "0000.00.00-test",
+  "dateReleased": "2026-10-21T00:00:00.000Z",
+  "count": 3,
+  "vulnerabilities": [
+    {"cveID": "CVE-2026-87902", "vendorProject": "WordPress", "product": "WordPress Core", "dateAdded": "2026-09-25", "dueDate": "2026-09-28", "knownRansomwareCampaignUse": "Unknown"},
+    {"cveID": "CVE-2026-96654", "vendorProject": "Plex", "product": "Plex Media Server", "dateAdded": "2026-10-20", "dueDate": "2026-10-23", "knownRansomwareCampaignUse": "Unknown"},
+    {"cveID": "CVE-2026-109383", "vendorProject": "TEST FIXTURE ONLY", "product": "synthetic entry to exercise the cache path", "dateAdded": "2026-10-21", "dueDate": "2026-11-11", "knownRansomwareCampaignUse": "Unknown"}
+  ]
+}

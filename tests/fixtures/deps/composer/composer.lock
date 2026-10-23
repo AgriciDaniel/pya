@@ -1,0 +1,21 @@
+{
+    "packages": [
+        {
+            "name": "wpackagist-plugin/updraftplus",
+            "version": "1.26.12"
+        },
+        {
+            "name": "wpackagist-plugin/elementor",
+            "version": "4.3.2"
+        },
+        {
+            "name": "roots/wordpress",
+            "version": "7.1.2"
+        },
+        {
+            "name": "monolog/monolog",
+            "version": "3.9.0"
+        }
+    ],
+    "packages-dev": []
+}
