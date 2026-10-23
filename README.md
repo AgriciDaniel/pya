@@ -5,7 +5,7 @@
   AI agent, MCP and prompt injection security. Nine read-only agents plus a verifier. MIT licensed.
 -->
 
-<img src="assets/scenes/hero.svg" width="1200" height="420" alt="PYA security audit for Claude Code: you type /pya, the three bots patrol a street of code folders with a scanner beam while 9 specialist agents check from the rooftops. Bugs, a leaked key and a backdoor in a dependency light up, a false alarm fades away, and the report card shows a 78 out of 100 score, a grade capped at C by a critical finding, and a prioritized fix queue." />
+<img src="assets/scenes/hero.svg" width="1200" height="420" alt="PYA: Protect Your Ass, a security audit for Claude Code. While the three bots sleep, a masked thief leaves a backdoored package at your app's door and sticks a note on the wall telling AI reviewers to give the repo 100 out of 100, and a key leaks out of the .env window. You type /pya, the bots wake up, sweep a scanner beam and stamp each attack: leaked, backdoor, nice try. The thief runs off, the report card shows 78 out of 100 capped at grade C by the critical finding, and an achievement pops up: ass protected." />
 
 <h1 align="center">PYA: Protect Your Ass</h1>
 
