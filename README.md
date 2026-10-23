@@ -1,151 +1,136 @@
-<p align="center">
-  <img src="assets/banner.svg" alt="claude-cybersecurity: AI-Powered Code Security Audit" width="100%">
-</p>
+# PYA: Protect Your Ass
+
+**A security audit for your code that runs inside Claude Code.** Type `/pya` and nine read-only
+specialist agents review your repository in parallel. A verifier double-checks every serious
+finding, and you get a scored report with a fix queue in the right order.
+
+<!-- Animated scenes (hero, recon, crew, backdoor, filter, report) go here once approved. -->
 
 <p align="center">
-  <a href="https://github.com/AgriciDaniel/claude-cybersecurity/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/claude--code-skill-blueviolet" alt="Claude Code Skill">
-  <img src="https://img.shields.io/badge/agents-8-00ff88" alt="8 Specialist Agents">
-  <img src="https://img.shields.io/badge/CWE%20Top%2025-100%25-red" alt="CWE Top 25 Coverage">
-  <img src="https://img.shields.io/badge/OWASP-2021-orange" alt="OWASP 2021">
-  <img src="https://img.shields.io/badge/languages-14-blue" alt="14 Languages">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/claude--code-plugin-blueviolet" alt="Claude Code plugin">
+  <img src="https://img.shields.io/badge/OWASP-Top%2010%3A2025-orange" alt="OWASP Top 10:2025">
+  <img src="https://img.shields.io/badge/MITRE%20ATT%26CK-v20-red" alt="MITRE ATT&CK v20">
+  <img src="https://img.shields.io/badge/threat%20feed-2026--10-blue" alt="Threat feed 2026-10">
 </p>
 
----
+## Install
 
-**The most comprehensive AI-powered cybersecurity code review skill for Claude Code.** Spawns 8 parallel specialist agents to audit your codebase across vulnerability detection, authorization verification, secret scanning, supply chain analysis, IaC security, threat intelligence (malware/C2/backdoor detection), AI-generated code patterns, and business logic flaws.
+In Claude Code (2.1.275 or later):
 
-**Complements GitHub Advanced Security** by detecting what static tools architecturally cannot: missing security controls, business logic flaws, attack-path chaining, and obfuscated secrets — with zero configuration.
+```text
+/plugin install pya --marketplace AgriciDaniel/claude-cybersecurity
+```
 
----
-
-## Installation
-
-### Manual (recommended)
+From a terminal:
 
 ```bash
-git clone https://github.com/AgriciDaniel/claude-cybersecurity.git
-cd claude-cybersecurity
-bash install.sh
+claude plugin marketplace add AgriciDaniel/claude-cybersecurity
+claude plugin install pya@pya
 ```
 
-### Plugin (Claude Code native)
+The repo also has a script that runs those same two commands: `bash install.sh`.
+
+Upgrading from v1 (`/cybersecurity`)? See [CHANGELOG.md](CHANGELOG.md#200---2026-10-23).
+
+## Use it
+
+```text
+/pya                         full audit of the current directory
+/pya --scope quick           fast check: code, auth, secrets, dependencies, malware
+/pya --scope diff            review only what the current branch changed
+/pya --focus agentic         one area at full depth (vuln, auth, secrets, deps, iac, threat, ai, logic, agentic)
+/pya --compliance pci        map findings to PCI DSS 4.0.1 (also hipaa, soc2, gdpr, cra)
+/pya --online                allow online lookups (off by default, see PRIVACY.md)
+```
+
+Demo video: https://youtu.be/aE295lLPO5A (recorded with v1)
+
+## What it checks
+
+| Agent | Looks for |
+|---|---|
+| Vulnerabilities | Injection, XSS, SSRF, path traversal, unsafe deserialization, weak crypto and randomness, memory safety |
+| Authorization | Missing auth checks, IDOR, privilege escalation, sessions, JWT and OAuth flaws |
+| Secrets | Hardcoded and leaked keys (including AI provider keys), tokens leaking into logs and bundles |
+| Dependencies | Malicious and vulnerable versions from a dated threat feed, end-of-life runtimes, install scripts, typosquats |
+| Infrastructure | Dockerfiles, compose, Kubernetes, Terraform, GitHub Actions, php.ini, ssh config |
+| Threat intel | Backdoors, startup-hook persistence, credential stealers, wipers, C2, cryptominers, mapped to MITRE ATT&CK |
+| AI-generated code | Missing validation, hallucinated imports, insecure defaults, placeholder credentials |
+| Logic | Business logic flaws, race conditions, missing controls, chains of smaller bugs |
+| AI agents and MCP | Hooks, permissions and MCP servers in agent configs, tool poisoning, hidden Unicode, AI agents in CI, LLM output reaching a shell or SQL |
+
+After the agents run, every CRITICAL and HIGH finding goes through a verifier. The verifier
+checks reachability, impact and environment, and drops what does not hold up. Dropped findings
+stay visible in the report's "Filtered Findings" section.
+
+## What makes the report trustworthy
+
+- **Scores come from a script.** `score.py` computes the scores, not the model. The grade is capped at C when any of these hold:
+  - a confirmed critical;
+  - a known-exploited dependency (CISA KEV);
+  - less than 75% coverage;
+  - too few agents completed.
+- **Honest coverage.** The report lists files reviewed, tools that did or did not run, and agents that failed. "No findings" is reported as "not proof of absence".
+- **A dated threat feed.** Version floors and malware indicators live in `skills/pya/feed/2026-10.json`, and every entry cites its source. The report prints the feed's age and warns when it is stale.
+- **Fix order matters.** Some cleanups backfire when done in the wrong order. Findings say so:
+  - Remove a token-watching wiper before revoking tokens.
+  - Do not run pip in an environment with a malicious `.pth` file.
+- **Optional real scanners.** If you have osv-scanner, trufflehog, zizmor or semgrep installed, PYA runs them offline and uses their results. PYA never installs anything.
+
+## Safe to run on code you do not trust
+
+- The specialist agents can only Read, Grep and Glob. Claude Code enforces this through the agent definitions.
+- PYA never runs your project's code, package manager or build.
+- Text in the repo is treated as data. Attempts to talk the reviewer into a clean report are reported as findings.
+- Offline by default. See [PRIVACY.md](PRIVACY.md) and [SECURITY.md](SECURITY.md).
+
+Opening a hostile repo in any editor or agent can still run its own hooks. See SECURITY.md for
+how to isolate one.
+
+## Standards
+
+OWASP Top 10:2025, CWE Top 25 (2025), MITRE ATT&CK v20, OWASP Top 10 for LLM Applications 2025,
+OWASP Top 10 for Agentic Applications 2026, OWASP MCP Top 10, OWASP ASVS 5.0.0, CVSS 4.0 with
+CISA KEV, PCI DSS 4.0.1, HIPAA Security Rule, SOC 2, GDPR, NIST SP 800-53 Release 5.2.0, EU
+Cyber Resilience Act. Versions and links:
+[skills/pya/references/standards.md](skills/pya/references/standards.md).
+
+## How it is built
+
+```text
+.claude-plugin/          plugin and marketplace manifests
+skills/pya/SKILL.md      the /pya orchestrator
+skills/pya/references/   standards, patterns, scoring, report template, response order
+skills/pya/feed/         dated threat feed (one file per month) and its schema
+skills/pya/scripts/      stdlib Python: inventory, feed_match, ioc_scan, run_tools, score
+agents/                  nine specialists plus the verifier, each with an enforced tool list
+evals/                   claude plugin eval cases with inert fixtures
+tests/                   pytest for the scripts, the feed and the detection seeds
+```
+
+Architecture and contracts: [docs/architecture.md](docs/architecture.md).
+
+## Development
 
 ```bash
-claude plugin install cybersecurity
+make check                       # tests, feed validation, seeds, dash check, shellcheck, plugin validate
+claude plugin eval . --scaffold  # model-backed evals (uses your Claude usage)
 ```
-
-### One-liner (convenience)
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/AgriciDaniel/claude-cybersecurity/main/install.sh | bash
-```
-
-## Demo
-
-https://youtu.be/aE295lLPO5A
-
----
-
-## Quick Start
-
-```bash
-# Full security audit of current project
-/cybersecurity
-
-# Quick scan (entry points + auth + secrets + deps only)
-/cybersecurity --scope quick
-
-# Review only changed files (PR review mode)
-/cybersecurity --scope diff
-
-# Deep dive into one dimension
-/cybersecurity --focus threat
-
-# With compliance mapping
-/cybersecurity --compliance pci
-```
-
-## What It Does
-
-<p align="center">
-  <img src="assets/agents-chart.svg" alt="8 Specialist Agents" width="100%">
-</p>
-
-## Key Differentiators vs GitHub Advanced Security
-
-| Capability | GHAS | This Skill |
-|------------|------|-----------|
-| Business logic flaw detection | No | Yes |
-| Authorization enforcement verification | Basic | Context-aware |
-| Race condition detection | Very limited | Concurrency pattern analysis |
-| Languages supported | 12 | 14 (pattern-based) + broader reasoning via LLM |
-| IaC/Container/CI-CD scanning | No | Terraform, Docker, K8s, Actions |
-| AI-generated code security | No | Specialized detection |
-| Obfuscated secret detection | Regex only | Semantic context analysis |
-| Threat intelligence (malware/C2) | No | MITRE ATT&CK mapped |
-| Framework-aware false-positive suppression | No | 10 frameworks |
-| Cost | $49/committer/month | Free (with Claude Code) |
-
-## Coverage
-
-<p align="center">
-  <img src="assets/coverage.svg" alt="Coverage at a Glance" width="100%">
-</p>
-
-## Scoring System
-
-<p align="center">
-  <img src="assets/scoring.svg" alt="Scoring System" width="100%">
-</p>
-
-## Architecture
-
-<p align="center">
-  <img src="assets/architecture.svg" alt="GARE Architecture" width="100%">
-</p>
-
-## File Structure
-
-```
-skills/cybersecurity/
-├── SKILL.md                              (~990 lines — orchestrator)
-├── references/
-│   ├── vulnerability-taxonomy.md         (25 CWE categories)
-│   ├── scoring-rubric.md                 (formula + confidence system)
-│   ├── threat-intelligence.md            (MITRE ATT&CK patterns)
-│   ├── compliance-matrix.md              (5 frameworks)
-│   ├── false-positive-suppression.md     (10 frameworks)
-│   ├── semgrep-patterns.md              (8 detection patterns)
-│   ├── report-template.md               (output format + worked example)
-│   ├── language-patterns/               (11 files)
-│   └── iac-patterns/                    (4 files)
-```
-
-**Total: 23 files, 5,350 lines of security knowledge.**
-
-## Requirements
-
-- [Claude Code](https://claude.ai/code) (CLI, Desktop, or IDE extension)
-- No other dependencies — zero configuration, works immediately
 
 ## Uninstall
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/AgriciDaniel/claude-cybersecurity/main/uninstall.sh | bash
+claude plugin uninstall pya@pya
+claude plugin marketplace remove pya
 ```
 
-Or manually:
-```bash
-rm -rf ~/.claude/skills/cybersecurity
-```
+## Related projects
 
-## Related Projects
-
-- [claude-seo](https://github.com/AgriciDaniel/claude-seo) — Comprehensive SEO analysis
-- [claude-blog](https://github.com/AgriciDaniel/claude-blog) — Full-lifecycle blog engine
-- [claude-ads](https://github.com/AgriciDaniel/claude-ads) — Paid advertising audit
+- [claude-seo](https://github.com/AgriciDaniel/claude-seo): SEO analysis
+- [claude-blog](https://github.com/AgriciDaniel/claude-blog): blog engine
+- [claude-ads](https://github.com/AgriciDaniel/claude-ads): paid advertising audit
 
 ## License
 
-[MIT](LICENSE) - AgriciDaniel 2026
+[MIT](LICENSE), AgriciDaniel 2026

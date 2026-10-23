@@ -4,7 +4,7 @@ Thumbs.db
 desktop.ini
 
 # Editor
-.vscode/
+/.vscode/
 .idea/
 *.swp
 *.swo
@@ -42,3 +42,7 @@ SECURITY-REPORT.md
 # Temp
 *.tmp
 *.log
+
+# Test and eval fixtures may contain inert certificates and keys on purpose
+!tests/fixtures/**
+!evals/**
