@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pya/feed/schema.json",
+  "title": "PYA monthly threat feed",
+  "type": "object",
+  "required": ["feed", "as_of", "expires", "source_digest", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "feed": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$"},
+    "as_of": {"type": "string", "format": "date"},
+    "expires": {"type": "string", "format": "date"},
+    "source_digest": {"type": "string"},
+    "entries": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/entry"}}
+  },
+  "$defs": {
+    "range": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "introduced": {"type": "string"},
+        "fixed": {"type": "string"},
+        "last_affected": {"type": "string"}
+      },
+      "required": ["introduced"]
+    },
+    "ioc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "value", "note"],
+      "properties": {
+        "type": {"enum": ["filename", "path_glob", "string", "regex", "domain", "ip"]},
+        "value": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "kind", "severity", "kev", "malicious", "confidence", "sources", "digest_ref"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^PYA-[0-9]{4}-[0-9]{2}-[0-9]{3}$"},
+        "title": {"type": "string"},
+        "kind": {"enum": ["package", "runtime", "image", "plugin", "tool", "technique"]},
+        "ecosystem": {"enum": ["npm", "PyPI", "Packagist", "WordPress", "Docker", "Go", "crates.io", "RubyGems", "Maven", "NuGet", "runtime"]},
+        "package": {"type": "string"},
+        "aliases": {"type": "array", "items": {"type": "string"}},
+        "ranges": {"type": "array", "items": {"$ref": "#/$defs/range"}},
+        "versions": {"type": "array", "items": {"type": "string"}},
+        "fixed_in": {"type": "array", "items": {"type": "string"}},
+        "severity": {"enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]},
+        "kev": {"type": "boolean"},
+        "malicious": {"type": "boolean"},
+        "confidence": {"enum": ["confirmed", "secondary", "unverified"]},
+        "cwe": {"type": "string"},
+        "attack": {"type": "string"},
+        "iocs": {"type": "array", "items": {"$ref": "#/$defs/ioc"}},
+        "response_order": {"type": "string"},
+        "advice": {"type": "string"},
+        "digest_ref": {"type": "string"},
+        "sources": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^https://"}}
+      }
+    }
+  }
+}

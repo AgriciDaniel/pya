@@ -1,0 +1,17 @@
+{
+  // bun lockfile, text format
+  "lockfileVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "fixture-bun",
+      "dependencies": {
+        "@modelcontextprotocol/sdk": "2.3.0",
+      },
+    },
+  },
+  "packages": {
+    "@modelcontextprotocol/sdk": ["@modelcontextprotocol/sdk@2.3.0", "", {}, "sha512-GGGG"],
+    "imgdecode": ["imgdecode@1.0.1", "", {}, "sha512-HHHH"],
+    "undici": ["undici@8.12.2", "", {}, "sha512-IIII"],
+  },
+}

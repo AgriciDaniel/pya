@@ -1,0 +1,12 @@
+version = 1
+requires-python = ">=3.11"
+
+[[package]]
+name = "mcp"
+version = "2.1.0"
+source = { registry = "https://pypi.org/simple" }
+
+[[package]]
+name = "pip"
+version = "26.2.2"
+source = { registry = "https://pypi.org/simple" }

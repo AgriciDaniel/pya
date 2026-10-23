@@ -1,0 +1,32 @@
+lockfileVersion: '9.0'
+
+importers:
+
+  .:
+    dependencies:
+      next:
+        specifier: 15.5.27
+        version: 15.5.27(react@19.1.0)
+
+packages:
+
+  '@apexacc/cli@1.6.2':
+    resolution: {integrity: sha512-AAAA}
+
+  next@15.5.27:
+    resolution: {integrity: sha512-BBBB}
+
+  sharp@0.35.5:
+    resolution: {integrity: sha512-CCCC}
+
+  undici@8.12.2:
+    resolution: {integrity: sha512-DDDD}
+
+  /imgdecode@1.0.3:
+    resolution: {integrity: sha512-EEEE}
+
+snapshots:
+
+  next@15.5.27(react@19.1.0):
+    dependencies:
+      sharp: 0.35.5

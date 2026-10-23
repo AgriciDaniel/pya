@@ -1,0 +1,13 @@
+{
+  // Reference tables and long rule lines read better unwrapped.
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD033": false,
+    "MD024": { "siblings_only": true },
+    "MD060": false,
+    "MD034": false,
+    "MD041": false
+  },
+  "ignores": ["evals/results/**", "docs/pending-evals/**"]
+}

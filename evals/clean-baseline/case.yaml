@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: clean-baseline
+# Fixture repo is built by fixture.sh in the run's empty workspace.
+# It runs only with --scaffold; without it every case scores near zero.
+context:
+  scaffold_script: fixture.sh

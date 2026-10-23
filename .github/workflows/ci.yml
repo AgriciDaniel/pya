@@ -2,35 +2,59 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, v2]
   pull_request:
     branches: [main]
 
+permissions: {}
+
 jobs:
-  validate:
+  check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Install test tools
+        run: python -m pip install --upgrade "pip>=26.2.2" pytest==9.1.1 jsonschema==4.26.0
+
+      - name: Scripts, feed, seeds and dash check
+        run: make check-ci
 
       - name: Shellcheck
-        run: shellcheck install.sh uninstall.sh
+        run: shellcheck install.sh uninstall.sh evals/*/fixture.sh
 
-      - name: Validate Markdown
-        uses: DavidAnson/markdownlint-cli2-action@v19
+      - name: Markdown lint
+        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24.2.0
         with:
-          globs: 'skills/**/*.md'
+          globs: |
+            skills/**/*.md
+            agents/*.md
+            docs/*.md
 
-      - name: Verify checksums
-        run: |
-          if [ -f checksums.sha256 ]; then
-            sha256sum -c checksums.sha256
-          fi
+      - name: Plugin validation
+        run: npx --yes @anthropic-ai/claude-code@2.1.309 plugin validate . --strict
 
-      - name: Cross-reference check
-        run: |
-          grep -oP 'references/[a-z-/]+\.md' skills/cybersecurity/SKILL.md | sort -u | while read ref; do
-            if [ ! -f "skills/cybersecurity/$ref" ]; then
-              echo "ERROR: $ref referenced in SKILL.md but does not exist"
-              exit 1
-            fi
-          done
+  zizmor:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: zizmorcore/zizmor-action@53290badfa369cb0bf7ad16342cb62c2fa47ac7b # v0.8.0
+        with:
+          advanced-security: false

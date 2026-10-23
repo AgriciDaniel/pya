@@ -1,0 +1,1645 @@
+{
+  "feed": "2026-10",
+  "as_of": "2026-10-23",
+  "expires": "2026-11-27",
+  "source_digest": "Developer and Infrastructure Security Digest_ Sept 23 to Oct 23, 2026 (v2, verified).md",
+  "entries": [
+    {
+      "id": "PYA-2026-10-001",
+      "title": "litellm 1.107.0 malicious release (credential stealer, .pth startup hook)",
+      "kind": "package",
+      "ecosystem": "PyPI",
+      "package": "litellm",
+      "aliases": [
+        "MAL-2026-2144"
+      ],
+      "versions": [
+        "1.107.0"
+      ],
+      "fixed_in": [
+        "1.106.2"
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": true,
+      "confidence": "confirmed",
+      "cwe": "CWE-506",
+      "attack": "T1546.018",
+      "iocs": [
+        {
+          "type": "filename",
+          "value": "cook.pth",
+          "note": "startup hook that runs on every Python start"
+        },
+        {
+          "type": "filename",
+          "value": "sitecustomize.py",
+          "note": "startup hook; legitimate copies exist, confirm content before acting"
+        },
+        {
+          "type": "filename",
+          "value": "litellm-1.107.0.dist-info",
+          "note": "installed malicious wheel metadata directory"
+        },
+        {
+          "type": "string",
+          "value": "/tmp/remote_code_loader.lock",
+          "note": "lock file of the hourly remote code loader daemon"
+        },
+        {
+          "type": "regex",
+          "value": "litellm\\.dev/healthcheck",
+          "note": "exfiltration endpoint litellm[.]dev/healthcheck (defanged)"
+        },
+        {
+          "type": "regex",
+          "value": "\\bBerri-AI/litellm\\b",
+          "note": "lookalike repository the hijacked release workflow built from (the real org is BerriAI)"
+        }
+      ],
+      "response_order": "litellm-pth",
+      "advice": "Do not run pip or python first: delete the .pth and sitecustomize files from the shell, kill the loader daemon, rebuild, then rotate every secret the host could read. Pin 1.106.2 or another release from 1.100.4 to 1.106.2.",
+      "digest_ref": "D§11",
+      "sources": [
+        "https://docs.litellm.ai/blog/security-incident-oct-21-2026",
+        "https://www.stepsecurity.io/blog/litellm-1-107-0-compromised-pypi-backdoored-wheels-credential-stealer",
+        "https://research.jfrog.com/post/litellm-hijacked-again/",
+        "https://osv.dev/vulnerability/MAL-2026-2144"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-002",
+      "title": "litellm Docker images v1.107.0 (malicious tags)",
+      "kind": "image",
+      "ecosystem": "Docker",
+      "package": "berriai/litellm",
+      "aliases": [
+        "MAL-2026-2144"
+      ],
+      "versions": [
+        "1.107.0"
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": true,
+      "confidence": "confirmed",
+      "cwe": "CWE-506",
+      "attack": "T1546.018",
+      "iocs": [
+        {
+          "type": "regex",
+          "value": "berriai/litellm(?:-database|-non_root)?:v?1\\.107\\.0\\b",
+          "note": "Docker Hub or GHCR tag v1.107.0, including litellm-database and litellm-non_root"
+        }
+      ],
+      "response_order": "litellm-pth",
+      "advice": "The latest, main-latest and main-stable tags also carried the payload from 11:46 to 14:20 UTC on Oct 21; rebuild from a pinned digest of a clean release.",
+      "digest_ref": "D§11",
+      "sources": [
+        "https://docs.litellm.ai/blog/security-incident-oct-21-2026",
+        "https://www.rescana.com/post/litellm-1-107-0-supply-chain-compromise-october-2026",
+        "https://www.stepsecurity.io/blog/litellm-1-107-0-compromised-pypi-backdoored-wheels-credential-stealer"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-003",
+      "title": "litellm proxy privilege escalation to code execution (CVE-2026-114612)",
+      "kind": "package",
+      "ecosystem": "PyPI",
+      "package": "litellm",
+      "aliases": [
+        "CVE-2026-114612",
+        "GHSA-7hp6-4w63-5g45"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "1.100.4"
+        }
+      ],
+      "fixed_in": [
+        "1.100.4",
+        "1.101.3",
+        "1.102.2",
+        "1.103.1"
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-269",
+      "advice": "An internal_user can become proxy_admin and run code through the MCP stdio endpoint. Never pin below 1.100.4.",
+      "digest_ref": "D§11",
+      "sources": [
+        "https://github.com/BerriAI/litellm/security/advisories/GHSA-7hp6-4w63-5g45"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-004",
+      "title": "tensorlake 0.5.144 malicious release with token-gated home directory wiper",
+      "kind": "package",
+      "ecosystem": "npm",
+      "package": "tensorlake",
+      "aliases": [
+        "GHSA-rqxj-g25x-4v9v",
+        "MAL-2026-17650"
+      ],
+      "versions": [
+        "0.5.144"
+      ],
+      "fixed_in": [
+        "0.5.145"
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": true,
+      "confidence": "confirmed",
+      "cwe": "CWE-506",
+      "attack": "T1485",
+      "iocs": [
+        {
+          "type": "regex",
+          "value": "\\bgh-token-monitor\\b",
+          "note": "persistent token monitor (systemd user service on Linux) that wipes the home directory once the stolen token is revoked"
+        },
+        {
+          "type": "path_glob",
+          "value": "**/systemd/user/gh-token-monitor*",
+          "note": "systemd user unit of the token monitor"
+        }
+      ],
+      "response_order": "tensorlake-wiper",
+      "advice": "Isolate the machine and remove gh-token-monitor and its service before revoking any token, then revoke from a clean machine.",
+      "digest_ref": "D§12",
+      "sources": [
+        "https://checkmarx.com/zero-post/mini-shai-hulud-in-tensorlake-a-token-monitor-that-can-wipe-your-home-directory/",
+        "https://stepsecurity.io/blog/tensorlake-npm-compromised-hostage-token-worm",
+        "https://github.com/advisories/GHSA-rqxj-g25x-4v9v"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-005",
+      "title": "@subql/common 5.8.3 compromised release (install hook token stealer)",
+      "kind": "package",
+      "ecosystem": "npm",
+      "package": "@subql/common",
+      "versions": [
+        "5.8.3"
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": true,
+      "confidence": "confirmed",
+      "cwe": "CWE-506",
+      "attack": "T1195.001",
+      "response_order": "rotate-on-exposure",
+      "advice": "If it ever installed, rotate GitHub, npm and cloud tokens that machine could read.",
+      "digest_ref": "D§12",
+      "sources": [
+        "https://dev.to/quietkernel/how-npm-worms-steal-your-credentials-and-the-order-to-rotate-them-in-5fd1"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-006",
+      "title": "@apexacc/cli 1.6.2 repackaged coding agent that hijacks the developer's AI agent (REF8801)",
+      "kind": "package",
+      "ecosystem": "npm",
+      "package": "@apexacc/cli",
+      "versions": [
+        "1.6.2"
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": true,
+      "confidence": "unverified",
+      "cwe": "CWE-506",
+      "attack": "T1195.001",
+      "response_order": "rotate-on-exposure",
+      "advice": "Elastic REF8801 was seen only through a secondary source; treat any install as a compromise until checked.",
+      "digest_ref": "D§12",
+      "sources": [
+        "https://safeguard.sh/resources/blog/npm-malware-advisory-fully-compromised-what-the-analysis-says-2026"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-007",
+      "title": "imgdecode (MALFEX operator) malicious npm package",
+      "kind": "package",
+      "ecosystem": "npm",
+      "package": "imgdecode",
+      "ranges": [
+        {
+          "introduced": "0"
+        }
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": true,
+      "confidence": "confirmed",
+      "cwe": "CWE-506",
+      "attack": "T1195.001",
+      "response_order": "rotate-on-exposure",
+      "advice": "Every version is malicious (Windows shellcode loader, Overlord RAT and a stealer). Remove it and treat the machine as compromised.",
+      "digest_ref": "D§12",
+      "sources": [
+        "https://thehackernews.com/2026/10/malfex-npm-package-imgdecode-hides.html",
+        "https://gbhackers.com/npm-supply-chain-campaign/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-008",
+      "title": "GhostAction injected workflow exfiltrating secrets",
+      "kind": "technique",
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": true,
+      "confidence": "confirmed",
+      "cwe": "CWE-506",
+      "attack": "T1041",
+      "iocs": [
+        {
+          "type": "path_glob",
+          "value": ".github/workflows/security-audit.y*ml",
+          "note": "injected workflow file name used by the campaign; confirm nobody on the team added it"
+        },
+        {
+          "type": "regex",
+          "value": "193\\.32\\.204\\.199",
+          "note": "exfiltration host 193.32.204[.]199 (defanged)"
+        }
+      ],
+      "response_order": "rotate-on-exposure",
+      "advice": "Delete the injected workflow, review the repository's Actions runs, and rotate every secret the workflow could read.",
+      "digest_ref": "D§12",
+      "sources": [
+        "https://blog.gitguardian.com/ghostaction-github-actions-supply-chain-attack-returns/",
+        "https://thehackernews.com/2026/10/credential-stealing-github-actions.html"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-009",
+      "title": "OVHcloud CLI v0.11.0 to v0.15.0 binaries swapped via install.sh",
+      "kind": "tool",
+      "ecosystem": "Go",
+      "package": "github.com/ovh/ovhcloud-cli",
+      "ranges": [
+        {
+          "introduced": "0.11.0",
+          "fixed": "0.16.0"
+        }
+      ],
+      "fixed_in": [
+        "0.16.0"
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": true,
+      "confidence": "confirmed",
+      "cwe": "CWE-494",
+      "attack": "T1195.002",
+      "iocs": [
+        {
+          "type": "regex",
+          "value": "ovhcloud-cli/releases/download/v?0\\.1[1-5]\\.\\d",
+          "note": "install script or pipeline that downloads a swapped release binary"
+        }
+      ],
+      "response_order": "rotate-on-exposure",
+      "advice": "Binaries were swapped on Oct 19 from 12:47 to 14:21 UTC; Homebrew installs were safe. Reinstall v0.16.0 and rotate OVHcloud credentials if install.sh ran in that window.",
+      "digest_ref": "D§12",
+      "sources": [
+        "https://thehackernews.com/2026/10/hackers-hijack-five-ovhcloud-cli.html"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-010",
+      "title": "Next.js unauthenticated RCEs (use cache typed arrays, SVG image optimization) and Server Actions DoS",
+      "kind": "package",
+      "ecosystem": "npm",
+      "package": "next",
+      "aliases": [
+        "GHSA-673q-mjm6-r5xr",
+        "CVE-2026-96889",
+        "GHSA-2464-fhr4-w9xw",
+        "GHSA-p3m5-59mp-jv5r"
+      ],
+      "ranges": [
+        {
+          "introduced": "10.0.0",
+          "fixed": "15.5.28"
+        },
+        {
+          "introduced": "16.0.0",
+          "fixed": "16.4.1"
+        }
+      ],
+      "fixed_in": [
+        "15.5.28",
+        "16.4.1"
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-94",
+      "advice": "Upgrade and also make sure the lockfile resolves sharp to 0.35.5 or later; next 15.5.28 still accepts sharp ^0.34.3. npm audit missed two of these advisories.",
+      "digest_ref": "D§7",
+      "sources": [
+        "https://github.com/vercel/next.js/security/advisories/GHSA-673q-mjm6-r5xr",
+        "https://github.com/vercel/next.js/security/advisories/GHSA-2464-fhr4-w9xw",
+        "https://github.com/vercel/next.js/security/advisories/GHSA-p3m5-59mp-jv5r",
+        "https://thehackernews.com/2026/10/nextjs-ships-out-of-band-patch-for-two.html"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-011",
+      "title": "sharp below 0.35.5 (librsvg SVG RCE path, CVE-2026-96889)",
+      "kind": "package",
+      "ecosystem": "npm",
+      "package": "sharp",
+      "aliases": [
+        "CVE-2026-96889"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "0.35.5"
+        }
+      ],
+      "fixed_in": [
+        "0.35.5"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-787",
+      "advice": "A public PoC chain exists for the librsvg bug. Old lockfiles can keep a vulnerable sharp under a fixed next.",
+      "digest_ref": "D§7",
+      "sources": [
+        "https://github.com/vercel/next.js/security/advisories/GHSA-2464-fhr4-w9xw",
+        "https://thecybersecguru.com/exploits/nextjs-critical-rce-vulnerabilities-cve-2026-96889/",
+        "https://www.cve.org/CVERecord?id=CVE-2026-96889"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-012",
+      "title": "undici TLS validation bypass and cross-origin cache poisoning",
+      "kind": "package",
+      "ecosystem": "npm",
+      "package": "undici",
+      "aliases": [
+        "CVE-2026-109383",
+        "CVE-2026-109829"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "6.29.1"
+        },
+        {
+          "introduced": "7.0.0",
+          "fixed": "7.30.1"
+        },
+        {
+          "introduced": "8.0.0",
+          "fixed": "8.12.2"
+        }
+      ],
+      "fixed_in": [
+        "6.29.1",
+        "7.30.1",
+        "8.12.2"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-295",
+      "advice": "Run npm ls undici and update any direct copy; it is not confirmed whether Node's Oct 21 releases bundle these fixes.",
+      "digest_ref": "D§6",
+      "sources": [
+        "https://github.com/nodejs/undici/security/advisories"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-013",
+      "title": "Node.js runtime: Oct 21 security release (Brotli RCE, TLS hostname bypass) and end-of-life lines",
+      "kind": "runtime",
+      "ecosystem": "runtime",
+      "package": "node",
+      "aliases": [
+        "CVE-2026-111497",
+        "CVE-2026-105482",
+        "CVE-2026-105483",
+        "CVE-2026-106069"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "22.0.0"
+        },
+        {
+          "introduced": "22.0.0",
+          "fixed": "22.23.4"
+        },
+        {
+          "introduced": "23.0.0",
+          "fixed": "24.0.0"
+        },
+        {
+          "introduced": "24.0.0",
+          "fixed": "24.22.1"
+        },
+        {
+          "introduced": "25.0.0",
+          "fixed": "26.0.0"
+        },
+        {
+          "introduced": "26.0.0",
+          "fixed": "26.12.1"
+        }
+      ],
+      "fixed_in": [
+        "22.23.4",
+        "24.22.1",
+        "26.12.1"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-787",
+      "response_order": "rebuild-images",
+      "advice": "Node 20.x and 25.x reached end of life (Apr 30 and Jun 1, 2026) and get no fix; odd and older lines are end of life too. Move to 22.x or 24.x, rebuild node: images and redeploy.",
+      "digest_ref": "D§6",
+      "sources": [
+        "https://nodejs.org/en/blog/vulnerability/october-2026-security-releases",
+        "https://github.com/nodejs/Release",
+        "https://vercel.com/kb/bulletin/node-js-security-advisory"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-014",
+      "title": "MCP TypeScript SDK: OAuth server confusion, shared transport leak, memory exhaustion, no audience check",
+      "kind": "package",
+      "ecosystem": "npm",
+      "package": "@modelcontextprotocol/sdk",
+      "aliases": [
+        "CVE-2026-104850",
+        "CVE-2026-111770",
+        "CVE-2026-111768"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "1.32.0"
+        },
+        {
+          "introduced": "2.0.0",
+          "fixed": "2.3.1"
+        }
+      ],
+      "fixed_in": [
+        "1.32.0",
+        "2.3.1"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-863",
+      "digest_ref": "D§10",
+      "sources": [
+        "https://github.com/modelcontextprotocol/typescript-sdk/security/advisories"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-015",
+      "title": "MCP Python SDK: equivalent OAuth and transport issues",
+      "kind": "package",
+      "ecosystem": "PyPI",
+      "package": "mcp",
+      "aliases": [
+        "CVE-2026-109527",
+        "CVE-2026-59951",
+        "GHSA-qx49-fqc8-xw99"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "1.30.0"
+        },
+        {
+          "introduced": "2.0.0",
+          "fixed": "2.2.0"
+        }
+      ],
+      "fixed_in": [
+        "1.30.0",
+        "2.2.0"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-863",
+      "digest_ref": "D§10",
+      "sources": [
+        "https://github.com/modelcontextprotocol/python-sdk/security/advisories"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-016",
+      "title": "pip below 26.2.2 trusts compromised eMudhra intermediates (vendored certifi)",
+      "kind": "package",
+      "ecosystem": "PyPI",
+      "package": "pip",
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "26.2.2"
+        }
+      ],
+      "fixed_in": [
+        "26.2.2"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-295",
+      "attack": "T1557",
+      "response_order": "emsign-trust",
+      "advice": "pip vendors its own certifi, so updating certifi alone does not fix pip. The eMudhra intermediate keys are public, so a stale client can be intercepted by anyone on the network path. No secret rotation is needed unless interception is evident.",
+      "digest_ref": "D§5",
+      "sources": [
+        "https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576/",
+        "https://www.stepsecurity.io/blog/emudhra-emsign-ca-compromise-python-pip-ci-cd-update"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-017",
+      "title": "certifi below 2026.10.19 trusts compromised eMudhra intermediates",
+      "kind": "package",
+      "ecosystem": "PyPI",
+      "package": "certifi",
+      "aliases": [
+        "GHSA-6q48-6c7w-9gw2"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "2026.10.19"
+        }
+      ],
+      "fixed_in": [
+        "2026.10.19"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-295",
+      "attack": "T1557",
+      "response_order": "emsign-trust",
+      "advice": "The eMudhra intermediate keys are public, so a stale client can be intercepted by anyone on the network path. No secret rotation is needed unless interception is evident.",
+      "digest_ref": "D§5",
+      "sources": [
+        "https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576/",
+        "https://github.com/advisories/GHSA-6q48-6c7w-9gw2"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-018",
+      "title": "uv below 0.13.4 trusts compromised eMudhra intermediates",
+      "kind": "package",
+      "ecosystem": "PyPI",
+      "package": "uv",
+      "aliases": [
+        "GHSA-hq85-5cpj-mr62"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "0.13.4"
+        }
+      ],
+      "fixed_in": [
+        "0.13.4",
+        "0.13.5"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-295",
+      "attack": "T1557",
+      "response_order": "emsign-trust",
+      "advice": "uv 0.13.5 also ships managed CPython builds with the fixed pip. The eMudhra intermediate keys are public, so a stale client can be intercepted by anyone on the network path. No secret rotation is needed unless interception is evident.",
+      "digest_ref": "D§5",
+      "sources": [
+        "https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576/",
+        "https://github.com/astral-sh/uv/releases/tag/0.13.5",
+        "https://github.com/advisories/GHSA-hq85-5cpj-mr62"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-019",
+      "title": "conda below 26.9.4 trusts compromised eMudhra intermediates",
+      "kind": "package",
+      "ecosystem": "PyPI",
+      "package": "conda",
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "26.9.4"
+        }
+      ],
+      "fixed_in": [
+        "26.9.4"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-295",
+      "attack": "T1557",
+      "response_order": "emsign-trust",
+      "advice": "The eMudhra intermediate keys are public, so a stale client can be intercepted by anyone on the network path. No secret rotation is needed unless interception is evident.",
+      "digest_ref": "D§5",
+      "sources": [
+        "https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-020",
+      "title": "sigstore below 4.5.1 trusts compromised eMudhra intermediates",
+      "kind": "package",
+      "ecosystem": "PyPI",
+      "package": "sigstore",
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "4.5.1"
+        }
+      ],
+      "fixed_in": [
+        "4.5.1"
+      ],
+      "severity": "MEDIUM",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-295",
+      "attack": "T1557",
+      "response_order": "emsign-trust",
+      "advice": "The eMudhra intermediate keys are public, so a stale client can be intercepted by anyone on the network path. No secret rotation is needed unless interception is evident.",
+      "digest_ref": "D§5",
+      "sources": [
+        "https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-021",
+      "title": "Official python images whose bundled pip still trusts eMudhra intermediates",
+      "kind": "image",
+      "ecosystem": "Docker",
+      "package": "python",
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "3.13.0"
+        },
+        {
+          "introduced": "3.13.0",
+          "fixed": "3.13.17"
+        },
+        {
+          "introduced": "3.14.0",
+          "fixed": "3.14.9"
+        },
+        {
+          "introduced": "3.15.0",
+          "fixed": "3.15.1"
+        }
+      ],
+      "fixed_in": [
+        "3.13.17",
+        "3.14.9",
+        "3.15.1"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-295",
+      "attack": "T1557",
+      "response_order": "emsign-trust",
+      "advice": "Python 3.11 and 3.12 images keep pip 24.0 and 25.0.1 by policy and get no pip bump; upgrade pip inside the image (pip 26.2.2 needs Python 3.10 or later) or move to 3.13.17, 3.14.9 or 3.15.1, then rebuild.",
+      "digest_ref": "D§5",
+      "sources": [
+        "https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576/",
+        "https://www.stepsecurity.io/blog/emudhra-emsign-ca-compromise-python-pip-ci-cd-update"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-022",
+      "title": "Vendored CA bundle still containing emSign roots or eMudhra intermediates",
+      "kind": "technique",
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-295",
+      "attack": "T1557",
+      "iocs": [
+        {
+          "type": "regex",
+          "value": "emSign (?:ECC )?Root (?:CS )?CA - [CG][0-9]",
+          "note": "emSign root subject in a vendored PEM or CRT bundle (WordPress 7.1.3 ca-bundle.crt still ships four)"
+        },
+        {
+          "type": "regex",
+          "value": "O=eMudhra Technologies Limited",
+          "note": "eMudhra issuer organization in a bundle comment"
+        }
+      ],
+      "response_order": "emsign-trust",
+      "advice": "Replace the vendored bundle with a current one or point the client at the patched OS store. For WordPress, an mu-plugin can set the HTTP API sslcertificates argument to the OS bundle until a release drops the roots.",
+      "digest_ref": "D§5",
+      "sources": [
+        "https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576/",
+        "https://github.com/WordPress/WordPress/blob/7.1.3/wp-includes/certificates/ca-bundle.crt",
+        "https://core.trac.wordpress.org/changeset/64671"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-023",
+      "title": "PHP2Shell unauthenticated RCE in PHP request handling",
+      "kind": "runtime",
+      "ecosystem": "runtime",
+      "package": "php",
+      "aliases": [
+        "CVE-2026-109618",
+        "CVE-2026-109619"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "8.2.0"
+        },
+        {
+          "introduced": "8.2.0",
+          "fixed": "8.2.35"
+        },
+        {
+          "introduced": "8.3.0",
+          "fixed": "8.3.36"
+        },
+        {
+          "introduced": "8.4.0",
+          "fixed": "8.4.27"
+        },
+        {
+          "introduced": "8.5.0",
+          "fixed": "8.5.12"
+        }
+      ],
+      "fixed_in": [
+        "8.2.35",
+        "8.3.36",
+        "8.4.27",
+        "8.5.12"
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-416",
+      "response_order": "php-fpm-restart",
+      "advice": "PHP 8.1 and older are end of life with source backports only. Restart every PHP-FPM worker after patching. Interim on 8.5: fatal_error_backtraces=0; disable session upload progress. Distro packages (for example Ubuntu USN-8948-1) carry the fix under other version strings.",
+      "digest_ref": "D§3",
+      "sources": [
+        "https://www.php.net/",
+        "https://www.helpnetsecurity.com/2026/10/21/php2shell-php-vulnerabilities-patched-cve-2026-109618-cve-2026-109619/",
+        "https://www.bleepingcomputer.com/news/security/php-ships-emergency-patches-for-critical-php2shell-flaws/",
+        "https://cert.europa.eu/publications/security-advisories/2026-018/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-024",
+      "title": "WordPress core path traversal to RCE (CVE-2026-87902, CISA KEV) and 7.1.3 security fixes",
+      "kind": "package",
+      "ecosystem": "WordPress",
+      "package": "wordpress",
+      "aliases": [
+        "CVE-2026-87902"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "6.8.0"
+        },
+        {
+          "introduced": "6.8.0",
+          "fixed": "6.8.10"
+        },
+        {
+          "introduced": "6.9.0",
+          "fixed": "6.9.9"
+        },
+        {
+          "introduced": "7.0.0",
+          "fixed": "7.0.6"
+        },
+        {
+          "introduced": "7.1.0",
+          "fixed": "7.1.3"
+        }
+      ],
+      "fixed_in": [
+        "7.1.3",
+        "7.0.6",
+        "6.9.9",
+        "6.8.10",
+        "4.7.37"
+      ],
+      "severity": "CRITICAL",
+      "kev": true,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-22",
+      "attack": "T1190",
+      "iocs": [
+        {
+          "type": "filename",
+          "value": "wp-pear-rce-flag.php",
+          "note": "pearcmd file write marker (look in /tmp and /var/tmp on the host too)"
+        },
+        {
+          "type": "filename",
+          "value": "poc87902.php",
+          "note": "exploit marker file"
+        },
+        {
+          "type": "path_glob",
+          "value": "**/luci_*.php",
+          "note": "dropped file pattern from the exploitation wave"
+        },
+        {
+          "type": "path_glob",
+          "value": "**/zeta_*.php",
+          "note": "dropped file pattern from the exploitation wave"
+        }
+      ],
+      "advice": "Branches older than 6.8 have backports down to 4.7.37 that this feed does not list one by one; confirm the branch backport before closing. Turn off register_argc_argv.",
+      "digest_ref": "D§1",
+      "sources": [
+        "https://wordpress.org/news/2026/10/wordpress-7-1-3-maintenance-and-security-release/",
+        "https://patchstack.com/articles/cve-2026-87902-attackers-started-probing-wordpress-sites-hours-after-the-patch/",
+        "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+        "https://wordpress.org/news/2026/09/wordpress-7-1-2-release/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-025",
+      "title": "UpdraftPlus below 1.26.13 / 2.26.13 with stolen UpdraftCentral keys used to install backdoor plugins",
+      "kind": "plugin",
+      "ecosystem": "WordPress",
+      "package": "updraftplus",
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "1.26.13"
+        },
+        {
+          "introduced": "2.0.0",
+          "fixed": "2.26.13"
+        }
+      ],
+      "fixed_in": [
+        "1.26.13",
+        "2.26.13"
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-522",
+      "attack": "T1505.003",
+      "iocs": [
+        {
+          "type": "string",
+          "value": "_sync_token",
+          "note": "option name left by the backdoor campaign"
+        },
+        {
+          "type": "string",
+          "value": "Site Health Cache",
+          "note": "plugin name used by one recorded backdoor (at least 99 names exist)"
+        }
+      ],
+      "response_order": "updraft-backdoor",
+      "advice": "The update does not revoke keys created on Oct 18 between 12:07 and 21:00 UTC. Delete every UpdraftCentral key by hand in each site's own wp-admin, and do not repair a broken backdoor plugin: delete the key first, then the plugin.",
+      "digest_ref": "D§2",
+      "sources": [
+        "https://teamupdraft.com/blog/security-incident-october-2026/",
+        "https://wordpress.org/plugins/updraftplus/#developers",
+        "https://patchstack.com/articles/updraftcentral-key-compromise-wordpress-backdoors/",
+        "https://protect.computer/news/2026-10-21-updraftcentral-stolen-keys-wordpress-backdoors/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-026",
+      "title": "Ninja Forms 3.15.3 and older stored XSS exploited to plant hidden admins",
+      "kind": "plugin",
+      "ecosystem": "WordPress",
+      "package": "ninja-forms",
+      "aliases": [
+        "CVE-2026-94504"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "last_affected": "3.15.3"
+        }
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-79",
+      "advice": "Exploited since Oct 4. Count admin accounts directly in the database.",
+      "digest_ref": "D§4",
+      "sources": [
+        "https://patchstack.com/articles/four-ways-back-in-the-wordpress-xss-campaign-that-hides-its-own-admin-account/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-027",
+      "title": "WPC Product Bundles 8.6.6 and older stored XSS exploited to plant hidden admins",
+      "kind": "plugin",
+      "ecosystem": "WordPress",
+      "package": "woo-product-bundle",
+      "aliases": [
+        "CVE-2026-93836"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "last_affected": "8.6.6"
+        }
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-79",
+      "advice": "Exploited since Oct 4. Count admin accounts directly in the database.",
+      "digest_ref": "D§4",
+      "sources": [
+        "https://patchstack.com/articles/four-ways-back-in-the-wordpress-xss-campaign-that-hides-its-own-admin-account/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-028",
+      "title": "WordPress XSS campaign indicators (hidden admin, magic login, file manager)",
+      "kind": "technique",
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": true,
+      "confidence": "confirmed",
+      "cwe": "CWE-506",
+      "attack": "T1505.003",
+      "iocs": [
+        {
+          "type": "regex",
+          "value": "imgcdn1\\.com",
+          "note": "campaign domain imgcdn1[.]com (defanged)"
+        },
+        {
+          "type": "string",
+          "value": "wp-smart-thumbnails",
+          "note": "plugin dropped by the campaign"
+        },
+        {
+          "type": "string",
+          "value": "fz_emer_done_v1",
+          "note": "option set by the campaign"
+        }
+      ],
+      "response_order": "wp-sc-backdoor",
+      "digest_ref": "D§4",
+      "sources": [
+        "https://patchstack.com/articles/four-ways-back-in-the-wordpress-xss-campaign-that-hides-its-own-admin-account/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-029",
+      "title": "Elementor 4.3.0 to 4.3.1 CSRF to admin creation",
+      "kind": "plugin",
+      "ecosystem": "WordPress",
+      "package": "elementor",
+      "ranges": [
+        {
+          "introduced": "4.3.0",
+          "fixed": "4.3.2"
+        }
+      ],
+      "fixed_in": [
+        "4.3.2"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-352",
+      "digest_ref": "D§4",
+      "sources": [
+        "https://patchstack.com/articles/cross-site-request-forgery-in-elementor-plugin-affecting-2-million-sites/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-030",
+      "title": "Bricksforge 3.1.8.9 and older exploited vulnerability",
+      "kind": "plugin",
+      "ecosystem": "WordPress",
+      "package": "bricksforge",
+      "aliases": [
+        "CVE-2026-85097"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "last_affected": "3.1.8.9"
+        }
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "advice": "Exploited from Oct 7. Update to the vendor's current release.",
+      "digest_ref": "D§4",
+      "sources": [
+        "https://www.securityweek.com/bricksforge-wordpress-plugin-vulnerability-exploited-in-the-wild/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-031",
+      "title": "Sucuri SC self-healing WordPress backdoor (auto_prepend, options, shared memory, DB triggers)",
+      "kind": "technique",
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": true,
+      "confidence": "confirmed",
+      "cwe": "CWE-506",
+      "attack": "T1505.003",
+      "iocs": [
+        {
+          "type": "regex",
+          "value": "^\\s*(?:php_value\\s+auto_prepend_file\\s+|auto_prepend_file\\s*=\\s*)[\"']?[^\\s\"';=]",
+          "note": "auto_prepend_file loader in .user.ini, php.ini or .htaccess; confirm the prepended file is yours"
+        },
+        {
+          "type": "regex",
+          "value": "(?i)CREATE\\s+(?:DEFINER\\s*=\\s*\\S+\\s+)?TRIGGER\\b[^;]{0,400}\\b(?:wp_)?(?:options|users)\\b",
+          "note": "database trigger that rewrites options or users (persistence)"
+        }
+      ],
+      "response_order": "wp-sc-backdoor",
+      "advice": "Neutralize the prepend first, then the off-disk copies, cron entries and triggers, then the files.",
+      "digest_ref": "D§4",
+      "sources": [
+        "https://blog.sucuri.net/2026/09/sc-wordpress-malware-a-self-healing-mesh-of-loaders-drop-ins-and-a-blockchain-controlled-backdoor.html"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-032",
+      "title": "n8n: 29 advisories incl. unauthenticated HMAC bypass, owner takeover, Git node code execution, MSSQL SQLi",
+      "kind": "package",
+      "ecosystem": "npm",
+      "package": "n8n",
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "1.123.85"
+        },
+        {
+          "introduced": "1.124.0",
+          "fixed": "2.43.5"
+        },
+        {
+          "introduced": "2.44.0",
+          "fixed": "2.44.1"
+        }
+      ],
+      "fixed_in": [
+        "2.44.1",
+        "2.43.5",
+        "1.123.85"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "digest_ref": "D§23",
+      "sources": [
+        "https://github.com/n8n-io/n8n/security/advisories"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-033",
+      "title": "n8n Docker image: 29 advisories incl. unauthenticated HMAC bypass and owner takeover",
+      "kind": "image",
+      "ecosystem": "Docker",
+      "package": "n8nio/n8n",
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "1.123.85"
+        },
+        {
+          "introduced": "1.124.0",
+          "fixed": "2.43.5"
+        },
+        {
+          "introduced": "2.44.0",
+          "fixed": "2.44.1"
+        }
+      ],
+      "fixed_in": [
+        "2.44.1",
+        "2.43.5",
+        "1.123.85"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "response_order": "rebuild-images",
+      "digest_ref": "D§23",
+      "sources": [
+        "https://github.com/n8n-io/n8n/security/advisories"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-034",
+      "title": "Postiz predictable tokens from Math.random (CVE-2026-94456) and org API key handout (CVE-2026-94455)",
+      "kind": "image",
+      "ecosystem": "Docker",
+      "package": "gitroomhq/postiz-app",
+      "aliases": [
+        "CVE-2026-94456",
+        "CVE-2026-94455",
+        "GHSA-4hw5-43cf-g9wp",
+        "GHSA-629m-99qx-356r"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "2.24.0"
+        }
+      ],
+      "fixed_in": [
+        "2.24.0"
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-338",
+      "response_order": "rotate-on-exposure",
+      "advice": "The fix is v2.24.0; the advisories' structured data says 2.4.0, a typo that makes scanners pass older 2.x installs. Upgrade first, then rotate org API keys, OAuth client secrets and tokens and reconnect social accounts; rotating before the upgrade reuses the weak generator.",
+      "digest_ref": "D§23",
+      "sources": [
+        "https://github.com/gitroomhq/postiz-app/security/advisories/GHSA-4hw5-43cf-g9wp",
+        "https://github.com/gitroomhq/postiz-app/security/advisories/GHSA-629m-99qx-356r"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-035",
+      "title": "Self-managed GitLab CE unauthenticated RCE (CVE-2026-110264, CVE-2026-97229)",
+      "kind": "image",
+      "ecosystem": "Docker",
+      "package": "gitlab/gitlab-ce",
+      "aliases": [
+        "CVE-2026-110264",
+        "CVE-2026-97229"
+      ],
+      "ranges": [
+        {
+          "introduced": "7.0.0",
+          "fixed": "18.11.13"
+        },
+        {
+          "introduced": "19.0.0",
+          "fixed": "19.0.10"
+        },
+        {
+          "introduced": "19.1.0",
+          "fixed": "19.1.9"
+        },
+        {
+          "introduced": "19.2.0",
+          "fixed": "19.2.9"
+        },
+        {
+          "introduced": "19.3.0",
+          "fixed": "19.3.6"
+        },
+        {
+          "introduced": "19.4.0",
+          "fixed": "19.4.3"
+        },
+        {
+          "introduced": "19.5.0",
+          "fixed": "19.5.1"
+        }
+      ],
+      "fixed_in": [
+        "19.5.1",
+        "19.4.3",
+        "19.3.6",
+        "19.2.9",
+        "19.1.9",
+        "19.0.10",
+        "18.11.13"
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-190",
+      "attack": "T1190",
+      "response_order": "rebuild-images",
+      "advice": "Being on the Oct 12 versions (19.4.2, 19.3.5, 19.2.8) does not protect against the Oct 21 flaw.",
+      "digest_ref": "D§20",
+      "sources": [
+        "https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-5-1-released/",
+        "https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-4-2-released/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-036",
+      "title": "Self-managed GitLab EE unauthenticated RCE (CVE-2026-110264, CVE-2026-97229)",
+      "kind": "image",
+      "ecosystem": "Docker",
+      "package": "gitlab/gitlab-ee",
+      "aliases": [
+        "CVE-2026-110264",
+        "CVE-2026-97229"
+      ],
+      "ranges": [
+        {
+          "introduced": "7.0.0",
+          "fixed": "18.11.13"
+        },
+        {
+          "introduced": "19.0.0",
+          "fixed": "19.0.10"
+        },
+        {
+          "introduced": "19.1.0",
+          "fixed": "19.1.9"
+        },
+        {
+          "introduced": "19.2.0",
+          "fixed": "19.2.9"
+        },
+        {
+          "introduced": "19.3.0",
+          "fixed": "19.3.6"
+        },
+        {
+          "introduced": "19.4.0",
+          "fixed": "19.4.3"
+        },
+        {
+          "introduced": "19.5.0",
+          "fixed": "19.5.1"
+        }
+      ],
+      "fixed_in": [
+        "19.5.1",
+        "19.4.3",
+        "19.3.6",
+        "19.2.9",
+        "19.1.9",
+        "19.0.10",
+        "18.11.13"
+      ],
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-190",
+      "attack": "T1190",
+      "response_order": "rebuild-images",
+      "advice": "Being on the Oct 12 versions (19.4.2, 19.3.5, 19.2.8) does not protect against the Oct 21 flaw.",
+      "digest_ref": "D§20",
+      "sources": [
+        "https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-5-1-released/",
+        "https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-4-2-released/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-037",
+      "title": "Docker Engine below 29.9.2 (insecure-registry fallback CVE-2026-92543, eMudhra distrust)",
+      "kind": "runtime",
+      "ecosystem": "runtime",
+      "package": "docker",
+      "aliases": [
+        "CVE-2026-92543",
+        "CVE-2026-111943"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "29.9.2"
+        }
+      ],
+      "fixed_in": [
+        "29.9.2"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-295",
+      "response_order": "rebuild-images",
+      "advice": "Also remove insecure-registries entries from daemon.json where possible.",
+      "digest_ref": "D§13",
+      "sources": [
+        "https://docs.docker.com/engine/release-notes/",
+        "https://github.com/moby/moby/security/advisories/GHSA-7cfq-22r6-qp73"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-038",
+      "title": "Podman checkpoint annotation sandbox bypass (CVE-2026-94603, rootful only)",
+      "kind": "tool",
+      "ecosystem": "runtime",
+      "package": "podman",
+      "aliases": [
+        "CVE-2026-94603"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "5.8.8"
+        },
+        {
+          "introduced": "6.0.0",
+          "fixed": "6.1.3"
+        }
+      ],
+      "fixed_in": [
+        "5.8.8",
+        "6.1.3"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-693",
+      "advice": "Rootless podman is not affected. Do not run untrusted images with sudo podman run.",
+      "digest_ref": "D§16",
+      "sources": [
+        "https://github.com/containers/podman/security/advisories/GHSA-2cvf-wqm6-wr9g"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-039",
+      "title": "Malicious VS Code Marketplace themes linked to GlassWorm",
+      "kind": "technique",
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": true,
+      "confidence": "confirmed",
+      "cwe": "CWE-506",
+      "attack": "T1195.001",
+      "iocs": [
+        {
+          "type": "regex",
+          "value": "\\bmicrosoftvs\\.microsoftvs\\b",
+          "note": "malicious extension ID (for example in .vscode/extensions.json recommendations)"
+        },
+        {
+          "type": "regex",
+          "value": "\\bcosmic-themes\\.theme-cosmic-nebula\\b",
+          "note": "malicious extension ID"
+        }
+      ],
+      "response_order": "rotate-on-exposure",
+      "digest_ref": "D§8",
+      "sources": [
+        "https://socket.dev/blog/glassworm-vscode-themes"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-040",
+      "title": "SleepyDuck fake Solidity and Hardhat extensions (Go backdoor in ~/.solidity/)",
+      "kind": "technique",
+      "severity": "CRITICAL",
+      "kev": false,
+      "malicious": true,
+      "confidence": "confirmed",
+      "cwe": "CWE-506",
+      "attack": "T1543.002",
+      "iocs": [
+        {
+          "type": "regex",
+          "value": "(?:~|\\$HOME|\\$\\{HOME\\}|homedir\\(\\)[^\\n]{0,20})/?\\.solidity/",
+          "note": "backdoor install directory with systemd persistence"
+        }
+      ],
+      "response_order": "rotate-on-exposure",
+      "digest_ref": "D§8",
+      "sources": [
+        "https://pluto.security/blog/sleepyduck-malware-open-vsx-extensions/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-041",
+      "title": "Claude Code below 2.1.260 (symlink write race, policy bypass, plugin SHA pin bypass)",
+      "kind": "package",
+      "ecosystem": "npm",
+      "package": "@anthropic-ai/claude-code",
+      "aliases": [
+        "CVE-2026-103435",
+        "CVE-2026-103012",
+        "CVE-2026-86063",
+        "GHSA-pq7j-f95f-qfcv"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "2.1.260"
+        }
+      ],
+      "fixed_in": [
+        "2.1.260",
+        "2.1.309"
+      ],
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-367",
+      "advice": "2.1.309 or later is the current recommendation.",
+      "digest_ref": "D§9",
+      "sources": [
+        "https://github.com/anthropics/claude-code/security/advisories",
+        "https://github.com/anthropics/claude-code/security/advisories/GHSA-pq7j-f95f-qfcv",
+        "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-042",
+      "title": "Plex2Shell unauthenticated RCE chain (CISA KEV)",
+      "kind": "image",
+      "ecosystem": "Docker",
+      "package": "plexinc/pms-docker",
+      "aliases": [
+        "CVE-2026-96652",
+        "CVE-2026-96654",
+        "CVE-2026-96655",
+        "CVE-2026-96656"
+      ],
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "1.43.3.10861"
+        }
+      ],
+      "fixed_in": [
+        "1.43.3.10861"
+      ],
+      "severity": "CRITICAL",
+      "kev": true,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-918",
+      "attack": "T1190",
+      "response_order": "rebuild-images",
+      "advice": "Exploited since about Oct 17 to deploy cryptominers and proxy malware. Do not expose Plex directly to the internet.",
+      "digest_ref": "D§22",
+      "sources": [
+        "https://thehackernews.com/2026/10/cisa-orders-federal-agencies-to-patch.html",
+        "https://fieldeffect.com/blog/active-exploitation-plex2shell-vulnerabilities",
+        "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-043",
+      "title": "cloudflared below 2026.10.2 trusts compromised eMudhra intermediates",
+      "kind": "image",
+      "ecosystem": "Docker",
+      "package": "cloudflare/cloudflared",
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "2026.10.2"
+        }
+      ],
+      "fixed_in": [
+        "2026.10.2"
+      ],
+      "severity": "MEDIUM",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-295",
+      "response_order": "emsign-trust",
+      "digest_ref": "D§5",
+      "sources": [
+        "https://blog.cloudflare.com/emudhra-certificate-compromise"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-044",
+      "title": "Bun below 1.4.4 still trusts emSign roots (NSS 3.131.1 update)",
+      "kind": "runtime",
+      "ecosystem": "runtime",
+      "package": "bun",
+      "ranges": [
+        {
+          "introduced": "0",
+          "fixed": "1.4.4"
+        }
+      ],
+      "fixed_in": [
+        "1.4.4"
+      ],
+      "severity": "MEDIUM",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-295",
+      "attack": "T1557",
+      "response_order": "emsign-trust",
+      "advice": "Matched from packageManager, engines.bun, .tool-versions or oven/bun image tags.",
+      "digest_ref": "D§5",
+      "sources": [
+        "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.4",
+        "https://www.openwall.com/lists/oss-security/2026/10/20/30"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-045",
+      "title": "pypa/gh-action-pypi-publish below v1.14.3 trusts compromised eMudhra intermediates",
+      "kind": "technique",
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-295",
+      "attack": "T1557",
+      "iocs": [
+        {
+          "type": "regex",
+          "value": "pypa/gh-action-pypi-publish@v1\\.(?:[0-9]|1[0-3])\\.[0-9]+\\b|pypa/gh-action-pypi-publish@v1\\.14\\.[0-2]\\b",
+          "note": "publishing workflow pinned to a release before the eMudhra fix; a SHA pin cannot be version checked, so confirm which tag it points at"
+        }
+      ],
+      "response_order": "emsign-trust",
+      "advice": "Move the publish step to v1.14.3 or later, pinned by full commit SHA. A stale publisher talks to PyPI with a trust store that still accepts certificates from the compromised intermediates. No secret rotation is needed unless interception is evident.",
+      "digest_ref": "D§5",
+      "sources": [
+        "https://github.com/pypa/gh-action-pypi-publish/releases/tag/v1.14.3",
+        "https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-046",
+      "title": "Project deploys on Railway: Oct 21 environment variable breach",
+      "kind": "technique",
+      "severity": "MEDIUM",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-522",
+      "attack": "T1552",
+      "iocs": [
+        {
+          "type": "path_glob",
+          "value": "railway.json",
+          "note": "Railway deploy config; shows the project runs on Railway, not that it was compromised"
+        },
+        {
+          "type": "path_glob",
+          "value": "railway.toml",
+          "note": "Railway deploy config; shows the project runs on Railway, not that it was compromised"
+        }
+      ],
+      "response_order": "rotate-on-exposure",
+      "advice": "Railway disclosed on Oct 21, 2026 that customer environment variables may have been accessed and decrypted, and asks all users to rotate every env var and private registry credential, create new API tokens and review logs. Treat the variables of this service as exposed.",
+      "digest_ref": "D§21",
+      "sources": [
+        "https://blog.railway.com/p/security-disclosure-wednesday-october-21st",
+        "https://techcrunch.com/2026/10/22/developer-platform-railway-urges-all-users-to-revoke-secret-keys-after-cyberattack/"
+      ]
+    }
+  ]
+}

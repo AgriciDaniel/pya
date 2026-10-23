@@ -1,0 +1,16 @@
+[[package]]
+name = "litellm"
+version = "1.99.0"
+description = "fixture"
+optional = false
+python-versions = ">=3.9"
+
+[[package]]
+name = "certifi"
+version = "2026.10.18"
+description = "fixture"
+optional = false
+python-versions = ">=3.7"
+
+[metadata]
+lock-version = "2.0"
