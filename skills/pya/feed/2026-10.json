@@ -1585,6 +1585,61 @@
         "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.4",
         "https://www.openwall.com/lists/oss-security/2026/10/20/30"
       ]
+    },
+    {
+      "id": "PYA-2026-10-045",
+      "title": "pypa/gh-action-pypi-publish below v1.14.3 trusts compromised eMudhra intermediates",
+      "kind": "technique",
+      "severity": "HIGH",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-295",
+      "attack": "T1557",
+      "iocs": [
+        {
+          "type": "regex",
+          "value": "pypa/gh-action-pypi-publish@v1\\.(?:[0-9]|1[0-3])\\.[0-9]+\\b|pypa/gh-action-pypi-publish@v1\\.14\\.[0-2]\\b",
+          "note": "publishing workflow pinned to a release before the eMudhra fix; a SHA pin cannot be version checked, so confirm which tag it points at"
+        }
+      ],
+      "response_order": "emsign-trust",
+      "advice": "Move the publish step to v1.14.3 or later, pinned by full commit SHA. A stale publisher talks to PyPI with a trust store that still accepts certificates from the compromised intermediates. No secret rotation is needed unless interception is evident.",
+      "digest_ref": "D§5",
+      "sources": [
+        "https://github.com/pypa/gh-action-pypi-publish/releases/tag/v1.14.3",
+        "https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576/"
+      ]
+    },
+    {
+      "id": "PYA-2026-10-046",
+      "title": "Project deploys on Railway: Oct 21 environment variable breach",
+      "kind": "technique",
+      "severity": "MEDIUM",
+      "kev": false,
+      "malicious": false,
+      "confidence": "confirmed",
+      "cwe": "CWE-522",
+      "attack": "T1552",
+      "iocs": [
+        {
+          "type": "path_glob",
+          "value": "railway.json",
+          "note": "Railway deploy config; shows the project runs on Railway, not that it was compromised"
+        },
+        {
+          "type": "path_glob",
+          "value": "railway.toml",
+          "note": "Railway deploy config; shows the project runs on Railway, not that it was compromised"
+        }
+      ],
+      "response_order": "rotate-on-exposure",
+      "advice": "Railway disclosed on Oct 21, 2026 that customer environment variables may have been accessed and decrypted, and asks all users to rotate every env var and private registry credential, create new API tokens and review logs. Treat the variables of this service as exposed.",
+      "digest_ref": "D§21",
+      "sources": [
+        "https://blog.railway.com/p/security-disclosure-wednesday-october-21st",
+        "https://techcrunch.com/2026/10/22/developer-platform-railway-urges-all-users-to-revoke-secret-keys-after-cyberattack/"
+      ]
     }
   ]
 }

@@ -38,4 +38,4 @@ make check-ci
 
 ## KEV
 
-`scripts/update_kev.py` downloads the CISA KEV catalog to `~/.cache/pya/kev.json`. It only runs when you start it, and it is the only PYA script that uses the network. When that snapshot exists, `feed_match.py` also flags `kev` for any matched entry whose CVE alias is in the catalog.
+`scripts/update_kev.py` downloads the CISA KEV catalog to `~/.cache/pya/kev.json`. It only runs when you ask for it. The only other network use is `run_tools.py` with `--online`, which lets the optional scanners go online. When that snapshot exists, `feed_match.py` also flags `kev` for any matched entry whose CVE alias is in the catalog.

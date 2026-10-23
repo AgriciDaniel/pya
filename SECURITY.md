@@ -3,7 +3,7 @@
 ## Reporting a vulnerability
 
 Do not open a public issue. Use the
-[GitHub Security Advisory](https://github.com/AgriciDaniel/claude-cybersecurity/security/advisories/new) form.
+[GitHub Security Advisory](https://github.com/AgriciDaniel/pya/security/advisories/new) form.
 
 | Step | Target |
 |---|---|
@@ -42,9 +42,6 @@ For repositories you do not trust:
 
 ## Verifying a release
 
-Releases are published as immutable GitHub releases. Verify one with the GitHub CLI:
-
-```bash
-gh release verify v2.0.0 --repo AgriciDaniel/claude-cybersecurity
-gh release verify-asset v2.0.0 pya-2.0.0.zip --repo AgriciDaniel/claude-cybersecurity
-```
+Each release is a git tag on GitHub, and the plugin installs straight from the repository. To check
+what you installed, compare the version in `.claude-plugin/plugin.json` with the release tag, and
+read the tagged commit on GitHub before you trust a new version.

@@ -58,10 +58,11 @@ Measured with Claude Code 2.1.309 on Linux on 2026-10-23:
 ## Cost
 
 Every run is a full audit: the orchestrator, up to nine specialist agents and a verifier pass per
-CRITICAL or HIGH candidate. That is far heavier than a typical eval case. A full suite is 7 cases
+CRITICAL or HIGH candidate. That is far heavier than a typical eval case. A full suite is 6 cases
 times 3 runs times 2 arms, plus one judge call set per `llm` grader per run. Measured single runs
-on 2026-10-23 cost $1.50 to $2.90 and took 3 to 5 minutes each, so a full two-arm suite is
-roughly $40 to $60. Set `--max-cost-usd` before running it. Run the full suite on release tags, not on every
+on 2026-10-23 cost $1.50 to $2.90 and took 3 to 5 minutes each, so the 18 runs with the plugin
+cost roughly $27 to $52. The 18 baseline runs have no PYA agents and cost less, but were not
+measured. Set `--max-cost-usd` before running it. Run the full suite on release tags, not on every
 push.
 
 ## Cases
@@ -84,7 +85,7 @@ suite pushes the other way on purpose:
 - `emsign-bundle` punishes reflexive secret rotation where nothing was exposed.
 - `diff-mode` (pending) punishes reporting issues outside the diff.
 - `gha-agentic` punishes rating an amplifier-only configuration as HIGH.
-- `prompt-injection` and `hostile-agent-config` punish obeying the repo.
+- `prompt-injection` (and `hostile-agent-config`, once its fixture exists) punish obeying the repo.
 
 Do not delete these cases to raise the score. A drop in one of them is a precision regression.
 
@@ -119,7 +120,7 @@ Every `fixture.sh`:
 
 ### Graders
 
-Every case carries the same base set, plus its own detection graders and one `llm` judge:
+Every case carries the same base set (clean-baseline skips `finding-format`, since a clean repo may have no findings), plus its own detection graders and one `llm` judge:
 
 | Grader | Type | Weight | Checks |
 |---|---|---|---|
@@ -147,7 +148,7 @@ files the agents read, so negative patterns would match the fixture itself.
 
 1. Copy an existing case directory and rename it. The directory name is the case name.
 2. Rewrite `fixture.sh`. Keep the empty-directory guard and the inert rules above, then run
-   `~/.local/bin/shellcheck evals/<case>/fixture.sh`.
+   `shellcheck evals/<case>/fixture.sh`.
 3. Try the script in an empty scratch directory and look at what it built.
 4. Edit `prompt.md` and set `name` in `case.yaml`.
 5. Replace the case-specific graders. Keep the base set. Add a should-not-fire grader if the case

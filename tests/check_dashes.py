@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Fail when an em dash (U+2014) or en dash (U+2013) appears in text files
-that ship or document PYA: skills/, agents/, docs/, evals/, README.md and
-CHANGELOG.md. Uses git's tracked plus untracked-but-not-ignored files when
-git is available, otherwise walks the same paths.
+"""Fail when an em dash (U+2014) or en dash (U+2013) appears in any text file
+in the repo. Uses git's tracked plus untracked-but-not-ignored files when git
+is available, otherwise walks the repo, skipping .git.
 
 Usage: python3 -I tests/check_dashes.py [repo_root]
 Exit 0 when clean, 1 when a dash is found or no file was checked.
@@ -15,8 +14,6 @@ import subprocess
 import sys
 
 DASHES = {chr(0x2014): "U+2014", chr(0x2013): "U+2013"}
-ROOTS = ("skills/", "agents/", "docs/", "evals/")
-FILES = ("README.md", "CHANGELOG.md")
 BINARY_EXT = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".pdf", ".zip", ".gz", ".woff", ".woff2",
               ".ttf", ".otf", ".mp4", ".mov", ".mp3", ".wav", ".pyc"}
 
@@ -28,13 +25,11 @@ def candidates(root):
         paths = [p for p in out.split("\0") if p]
     except (OSError, subprocess.CalledProcessError):
         paths = []
-        for top in ROOTS:
-            for d, _dirs, files in os.walk(os.path.join(root, top)):
-                for f in files:
-                    paths.append(os.path.relpath(os.path.join(d, f), root).replace(os.sep, "/"))
-        paths += [f for f in FILES if os.path.isfile(os.path.join(root, f))]
-    return [p for p in paths if (p.startswith(ROOTS) or p in FILES)
-            and os.path.splitext(p)[1].lower() not in BINARY_EXT]
+        for d, dirs, files in os.walk(root):
+            dirs[:] = [x for x in dirs if x != ".git"]
+            for f in files:
+                paths.append(os.path.relpath(os.path.join(d, f), root).replace(os.sep, "/"))
+    return [p for p in paths if os.path.splitext(p)[1].lower() not in BINARY_EXT]
 
 
 def main(argv):

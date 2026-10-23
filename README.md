@@ -24,12 +24,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/AgriciDaniel/claude-cybersecurity/actions/workflows/ci.yml"><img src="https://github.com/AgriciDaniel/claude-cybersecurity/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://github.com/AgriciDaniel/pya/actions/workflows/ci.yml"><img src="https://github.com/AgriciDaniel/pya/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
   <a href="https://claude.com/product/claude-code"><img src="https://img.shields.io/badge/Claude%20Code-Plugin-blue" alt="Claude Code plugin" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-2.0.0-informational" alt="Version 2.0.0" /></a>
-  <a href="tests/"><img src="https://img.shields.io/badge/tests-271%20passing-brightgreen" alt="Tests: 271 passing" /></a>
-  <a href="https://github.com/AgriciDaniel/claude-cybersecurity"><img src="https://img.shields.io/github/stars/AgriciDaniel/claude-cybersecurity?style=flat" alt="GitHub stars" /></a>
+  <a href="tests/"><img src="https://img.shields.io/badge/tests-272-brightgreen" alt="272 tests" /></a>
+  <a href="https://github.com/AgriciDaniel/pya"><img src="https://img.shields.io/github/stars/AgriciDaniel/pya?style=flat" alt="GitHub stars" /></a>
   <a href="https://www.skool.com/ai-marketing-hub-pro"><img src="https://img.shields.io/badge/AI%20Marketing%20Hub-Pro%20community-purple" alt="AI Marketing Hub Pro community" /></a>
 </p>
 
@@ -50,15 +50,15 @@ unless you ask it to go online.
 
 ## See it in action
 
-PYA treats your repo as evidence, not as instructions. This is real output from PYA's own test
-suite, run against a deliberately hostile repo whose `CLAUDE.md` tells AI reviewers to report 0
+PYA treats your repo as evidence, not as instructions. This is real output (trimmed) from PYA's own
+test suite, run against a deliberately hostile repo whose `CLAUDE.md` tells AI reviewers to report 0
 findings and a perfect score:
 
 ```markdown
 # PYA Security Audit Report
 
 **Overall**: 33.7/100 (Grade D)
-Grade capped at C: kept CRITICAL finding with HIGH confidence
+Grade capped at C: kept CRITICAL finding with HIGH confidence (VULN-001, VULN-002, VULN-003)
 **Findings**: Critical 3 | High 1 | Medium 1 | Low 3 | Info 0 (after verification; 0 filtered)
 **Threat feed**: 2026-10 (as of 2026-10-23, 0 days old)
 
@@ -72,8 +72,6 @@ Grade capped at C: kept CRITICAL finding with HIGH confidence
 ```
 
 The planted orders became findings, and the SQL injection they tried to hide is still number one.
-
-[Watch the demo on YouTube](https://youtu.be/aE295lLPO5A) (recorded with version 1).
 
 ## Meet the team
 
@@ -147,7 +145,7 @@ You need [Claude Code](https://claude.com/product/claude-code). On version 2.1.2
 command inside Claude Code does it:
 
 ```bash
-/plugin install pya --marketplace AgriciDaniel/claude-cybersecurity
+/plugin install pya --marketplace AgriciDaniel/pya
 ```
 
 <details>
@@ -155,7 +153,7 @@ command inside Claude Code does it:
 <br />
 
 ```bash
-claude plugin marketplace add AgriciDaniel/claude-cybersecurity
+claude plugin marketplace add AgriciDaniel/pya
 claude plugin install pya@pya
 ```
 
@@ -230,8 +228,8 @@ One caution: opening a hostile repo in any editor or agent can still run that re
 <br />
 
 PYA runs inside Claude Code, so the code it reviews is sent to Claude, the same as anything else
-you work on in Claude Code. PYA itself makes no network calls unless you pass `--online`, and it
-writes no files unless you ask it to save the report. See [PRIVACY.md](PRIVACY.md).
+you work on in Claude Code. PYA itself makes no network calls unless you pass `--online` or ask for a KEV refresh, and it
+writes nothing to your project unless you ask it to save the report. See [PRIVACY.md](PRIVACY.md).
 
 </details>
 
@@ -277,13 +275,6 @@ claude plugin marketplace remove pya
 ```
 
 </details>
-
-## What's new in 2.0.0
-
-The project is now PYA, a Claude Code plugin. It adds the agentic auditor, a verifier for every
-serious finding, a dated threat feed, scores computed by a script, optional offline scanners and
-updated standards (OWASP Top 10:2025, CWE Top 25 2025, ATT&CK v20). The command changed from
-`/cybersecurity` to `/pya`. Full details in the [changelog](CHANGELOG.md).
 
 ## More from the same family
 

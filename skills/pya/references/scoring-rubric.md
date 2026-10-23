@@ -121,6 +121,7 @@ The grade is capped at **C** when any of these hold. Print every reason as `Grad
 3. Coverage below 75 percent of files in scope.
 4. Dispatched agents failed, and either fewer than 6 completed or more than a quarter of those dispatched failed.
    Agents not dispatched on purpose (scope, `--focus`, area absent) are passed as `skipped` and never count as failures.
+5. Coverage could not be measured, because no agent reported files in scope.
 
 A capped grade never rises above C. A lower computed grade stays lower.
 

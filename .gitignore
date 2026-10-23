@@ -37,7 +37,7 @@ node_modules/
 *-REPORT.md
 *-AUDIT.md
 SECURITY-REPORT.md
-.cybersecurity-cache/
+pya-report-*.md
 
 # Temp
 *.tmp

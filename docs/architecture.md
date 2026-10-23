@@ -127,7 +127,8 @@ The report header always prints the feed month, its `as_of` date and its age in 
   - any kept CRITICAL with HIGH confidence;
   - any KEV match;
   - coverage below 75 percent of files in scope;
-  - dispatched agents failed and either fewer than 6 completed or more than a quarter failed.
+  - dispatched agents failed and either fewer than 6 completed or more than a quarter failed;
+  - coverage could not be measured (no files in scope reported).
 - Agents not dispatched on purpose (scope, `--focus`, or an absent area) are passed in `skipped`.
   They are neither scored nor counted as failures.
 - A clean result is always worded "no findings in reviewed scope, not proof of absence".

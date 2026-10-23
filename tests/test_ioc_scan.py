@@ -133,3 +133,19 @@ def test_unreadable_files_reported_separately(tmp_path):
     assert out["inspected"]["files_unreadable"] == 1
     assert out["inspected"]["unreadable_sample"] == ["hidden.py"]
     assert out["inspected"]["files_skipped_binary_or_large"] == 0
+
+
+def test_pypi_publish_action_and_railway(tmp_path):
+    write(tmp_path, ".github/workflows/release.yml",
+          "on: push\njobs:\n  p:\n    runs-on: ubuntu-latest\n    steps:\n"
+          "      - uses: pypa/gh-action-pypi-publish@v1.13.0\n")
+    write(tmp_path, ".github/workflows/ok.yml",
+          "on: push\njobs:\n  p:\n    runs-on: ubuntu-latest\n    steps:\n"
+          "      - uses: pypa/gh-action-pypi-publish@v1.14.3\n")
+    write(tmp_path, "railway.toml", "[deploy]\nstartCommand = \"node server.js\"\n")
+    code, out, err = run_script("ioc_scan.py", str(tmp_path))
+    assert code == 0, err
+    hits = {(h["feed_id"], h["file"]) for h in out["hits"] if h["source"] == "feed"}
+    assert ("PYA-2026-10-045", ".github/workflows/release.yml") in hits
+    assert ("PYA-2026-10-045", ".github/workflows/ok.yml") not in hits
+    assert ("PYA-2026-10-046", "railway.toml") in hits

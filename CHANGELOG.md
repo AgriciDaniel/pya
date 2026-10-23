@@ -4,10 +4,10 @@ All notable changes to PYA (formerly claude-cybersecurity) are documented here.
 
 ## [2.0.0] - 2026-10-23
 
-Renamed to **PYA (Protect Your Ass)**. The command is now `/pya`, and the plugin name is `pya`.
+Renamed to **PYA (Protect Your Ass)**. The command is now `/pya`, and the plugin name is `pya`. The repository moved from `AgriciDaniel/claude-cybersecurity` to `AgriciDaniel/pya`; GitHub redirects the old URL.
 
 ### Migration from v1
-- Install as a plugin: `/plugin install pya --marketplace AgriciDaniel/claude-cybersecurity`.
+- Install as a plugin: `/plugin install pya --marketplace AgriciDaniel/pya`.
 - The old skill at `~/.claude/skills/cybersecurity` keeps answering to `/cybersecurity` until you remove it with `rm -rf ~/.claude/skills/cybersecurity`.
 - Flags are unchanged: `--scope`, `--focus` and `--compliance`. New: `--online`, `--focus agentic`, `--compliance cra`.
 
@@ -56,7 +56,7 @@ Renamed to **PYA (Protect Your Ass)**. The command is now `/pya`, and the plugin
 - **CI pins.** CI pinned actions by tag; they are now pinned to full SHAs, with `persist-credentials: false`.
 - **Unverifiable statistics** were removed from the reference files.
 
-## [1.0.1] - 2026-04-15
+## [1.1.0] - 2026-04-15
 ### Security
 - Remove WebFetch/WebSearch phantom permissions (VULN-003, VULN-006)
 - Add prompt injection defense to agent dispatch (VULN-001)

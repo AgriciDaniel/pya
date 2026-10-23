@@ -49,9 +49,9 @@ in `${CLAUDE_SKILL_DIR}/feed`.
      discovery commands (`ls`, `echo`, `which`, `cat`, `find`, `cd`) first; `${CLAUDE_SKILL_DIR}` is
      already the real path. If one script command is denied or fails, mark that script `failed`
      and still run the others: one denial does not mean Bash is unavailable.
-   - Do not write any file unless the user asks for the report to be saved.
-3. **Offline by default.** Network use happens only with `--online`, and only through
-   `run_tools.py` and `update_kev.py`. Say what each one sends before running it.
+   - Do not write any file in the project unless the user asks for the report to be saved.
+3. **Offline by default.** Network use happens only through `run_tools.py` with `--online`, or
+   `update_kev.py` when the user asks for a KEV refresh. Say what each one sends before running it.
 4. **Never claim more than you measured.** A tool that did not run is "not run". No findings is
    "not proof of absence". A failed agent is "unreviewed".
 
@@ -65,7 +65,7 @@ in `${CLAUDE_SKILL_DIR}/feed`.
 | `--scope diff` | | Changed files since the merge base, with their surrounding functions; report only issues introduced by the change |
 | `--focus <agent>` | | One agent at full depth. Short names: `vuln`, `auth`, `secrets`, `deps`, `iac`, `threat`, `ai`, `logic`, `agentic` |
 | `--compliance <x>` | none | Map findings to `pci`, `hipaa`, `soc2`, `gdpr` or `cra` using `references/compliance-matrix.md` |
-| `--online` | off | osv-scanner online lookups, trufflehog live verification, KEV refresh |
+| `--online` | off | osv-scanner online lookups, trufflehog live verification, zizmor online audits |
 
 ## Phase 1: Gather
 
@@ -133,7 +133,8 @@ python3 -I "${CLAUDE_SKILL_DIR}/scripts/run_tools.py" "TARGET" [--online]
 With `--online`, first tell the user what will be sent:
 
 - osv-scanner sends package names and versions to osv.dev;
-- trufflehog sends candidate secrets to their providers to test them.
+- trufflehog sends candidate secrets to their providers to test them;
+- zizmor queries api.github.com about the actions your workflows use, with any GitHub token in the environment.
 
 Run KEV refresh only on request: `python3 -I "${CLAUDE_SKILL_DIR}/scripts/update_kev.py"`.
 
@@ -227,7 +228,8 @@ Use its output as-is.
 
 Render `${CLAUDE_SKILL_DIR}/references/report-template.md` exactly. Required:
 
-- the header lines, including `**Threat feed**`, its age, and every `Grade capped at C:` reason;
+- the header lines, including `**Threat feed**`, its age, and every `Grade capped at C:` reason, with the
+  agent finding ids in each reason replaced by their final `VULN-NNN` numbers;
 - `## Scope and Coverage`, with the tool status table;
 - findings renumbered `VULN-001` onward by severity, each with CWE, OWASP 2025 and, where relevant, ATT&CK v20 and AI (LLM, ASI or MCP) IDs;
 - a `Response order:` block whenever a finding has a key from `references/response-order.md`, followed by its steps;
@@ -241,7 +243,8 @@ Keep the report factual. No marketing language, and no statistics that are not f
 a cited source.
 
 If the user asks to save the report, write it to the path they give, defaulting to
-`./pya-report-<date>.md`. That is the only write PYA ever does.
+`./pya-report-<date>.md`. That is the only file PYA writes in the project. The KEV refresh, run only
+on request, writes its cache to `~/.cache/pya/kev.json`.
 
 ## Special handling
 

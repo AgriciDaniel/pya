@@ -3,7 +3,7 @@
 # The plugin is fetched by Claude Code from the GitHub marketplace in this repo.
 set -euo pipefail
 
-REPO="AgriciDaniel/claude-cybersecurity"
+REPO="AgriciDaniel/pya"
 PLUGIN="pya@pya"
 OLD_SKILL_DIR="$HOME/.claude/skills/cybersecurity"
 

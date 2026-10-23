@@ -22,8 +22,9 @@ Rules (references/scoring-rubric.md):
   removed, never a neutral 50;
 - overall = weighted mean over completed applicable agents;
 - grade A >= 90, B >= 75, C >= 50, D >= 25, F below; capped at C on a kept
-  CRITICAL with HIGH confidence, any KEV match, coverage below 75 percent,
-  or fewer than 6 applicable agents completed.
+  CRITICAL with HIGH confidence, any KEV match, coverage below 75 percent or
+  not measurable, or failed agents (fewer than 6 completed, or more than a
+  quarter of those dispatched).
 """
 
 from __future__ import annotations
